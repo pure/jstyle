@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+	<title>jstyle</title>
+	<script src="jstyle.js"></script>
+	<script>
+		jstyle().addStyle({
+		/* 
+		*   Variables
+		*/
+			// assign a string value
+			$main:'#0C0', 
+			$space:'2em',
+
+			// assign a value by a function
+			$mainLight:function(css){
+				// css is a reference to this json itself
+				return css['$main'].replace(/0/g, '8');
+			},
+
+		/*
+		*   Style definition, css like but in JSON: 
+		*
+		*	with commas "," instead of semi-colons ";"
+		*	and some reserved js words can't be used as a property, i.e: "float" as below
+		*	to overcome this, place the property name between quotes/double quotes
+		*/
+
+			'body':{
+				background:'#121',
+				color:'$main'
+			},
+			'.hello':{
+				border:'solid 1px $mainLight',
+				background:'#040',
+				'float':'left',
+				padding:'$space',
+				margin:'$space'
+			}
+		});
+		// example below on how to load a static css from a file - disabled 
+		// jstyle().addLink('http://beebole-apps.com/themes/theme.css')
+	</script>
+</head>
+<body>
+<div class="hello">Hello Wrrld !</div>
+</body>
+</html>
