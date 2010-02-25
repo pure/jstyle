@@ -1,4 +1,4 @@
-<h1>jstyle - Programmed styles</h1>
+<h1>jstyle - Replace CSS by Javascript</h1>
 
 <p>&nbsp;</p>
 
