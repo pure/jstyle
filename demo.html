@@ -6,20 +6,18 @@
 	<title>jstyle</title>
 	<script src="jstyle.js"></script>
 	<script>
-		jstyle().addStyle({
-		/* 
-		*   Variables
-		*/
-			// assign a string value
-			$main:'#0C0', 
-			$space:'2em',
-
+		jstyle.setVars({
+			/* 
+			*   Variables
+			*/
+			main:'#0C0',
+			space:'2em',
 			// assign a value by a function
-			$mainLight:function(css){
+			mainLight:function(){
 				// css is a reference to this json itself
-				return css['$main'].replace(/0/g, '8');
-			},
-
+				return this.vars.main.replace(/0/g, '8');
+			}
+		}).addStyle({
 		/*
 		*   Style definition, css like but in JSON: 
 		*
@@ -27,14 +25,13 @@
 		*	and some reserved js words can't be used as a property, i.e: "float" as below
 		*	to overcome this, place the property name between quotes/double quotes
 		*/
-
 			'body':{
 				background:'#121',
 				color:'$main'
 			},
 			'.hello':{
 				border:'solid 1px $mainLight',
-				background:'#040',
+				background:'#040', //normal assignment (no variable)
 				'float':'left',
 				padding:'$space',
 				margin:'$space'

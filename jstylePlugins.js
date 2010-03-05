@@ -1,9 +1,14 @@
-jstyle()
-
-.addMethod('css2json', function(css){
+jstyle.css2json = function(css){
 	var css2 = css || this.css, 
 		json = {},
-		s, e, k, v, i, ii, props;
+		s, e, k, v, i, ii, props,
+		clean = function(s){
+			var t = s.replace(/^\s\s*/, ''),
+				w = /\s/, 
+				l = t.length;
+			while(w.test(t.charAt(l--)));
+			return t.slice(0, l + 1).replace(/\s*\n\s*/g, '').replace(/\t/g,'').replace(/\/\*[^\*]+\*\//m, '');
+		};
 	while(css2){
 		s = css2.indexOf('{');
 		e = css2.indexOf('}', s);
@@ -28,15 +33,14 @@ jstyle()
 	};
 	this.json = json;
 	return this;
-})
+};
 
-.addMethod('dom2css', function(id){
-	id = id || domId;
-	var styleNodes = id ? [document.getElementById(id)]:document.getElementsByTagName('STYLE'),
-		i = 0, ii = styleNodes.length;
-	for(;i < ii; i++){
+jstyle.dom2css = function(){
+	var styleNodes = document.getElementsByTagName('STYLE'),
+		i = 0, ii = styleNodes.length, css;
+	do{
 		css += styleNodes[i].styleSheet ? styleNodes[i].styleSheet.cssText : styleNodes[i].innerHTML;
-	}
+	}while(++i < ii)
 	this.css = css;
 	return this;
-});
+};

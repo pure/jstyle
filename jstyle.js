@@ -1,5 +1,5 @@
 /* JSTYLE - MIT License - (c) 2010 BeeBole.com  - rev 1.0 */
-window.jstyle = function(arg){
+window.jstyle = (function(arg){
 	var vars = {},
 		agent = navigator.userAgent.toLowerCase(),
 		browsers = {
@@ -8,31 +8,25 @@ window.jstyle = function(arg){
 			'Opera':agent.indexOf('opera') > -1,
 			'webkit':agent.indexOf('webkit') > -1
 		},
-		clean = function(s){
-			var t = s.replace(/^\s\s*/, ''),
-				w = /\s/, 
-				l = t.length;
-			while(w.test(t.charAt(l--)));
-			return t.slice(0, l + 1).replace(/\s*\n\s*/g, '').replace(/\t/g,'').replace(/\/\*[^\*]+\*\//m, '');
-		},
 		json2css = function(json){
-			var parseJSON = function(sub){
-				var a = [], prop, subProp, varCall = /(\$\S+)/, varVal;
+			var jstyle = this,
+				parseJSON = function(sub){
+				var a = [], 
+					prop, subProp, 
+					varCall = /(\$(\S+))/, varVal, vars = jstyle.vars;
 				for(prop in sub){
 					subProp = sub[prop];
-					subProp = typeof subProp === 'function' ? subProp(json) : subProp;
-					if(prop[0] === '$'){
-						vars[prop] = subProp;
+					if(typeof subProp === 'object'){
+						a.push(prop + '{' + parseJSON(subProp) + '}');
 					}else{
-						if(typeof subProp === 'object'){
-							a.push(prop + '{' + parseJSON(subProp) + '}');
-						}else{
-							if((varCall).test(subProp)){
-								varVal = vars[subProp.match(varCall)[0]];
+						if((varCall).test(subProp)){
+							varVal = vars[subProp.match(varCall)[2]];
+							varVal = typeof varVal === 'function' ? varVal.call(jstyle, json) : varVal;
+							if(subProp){
 								subProp = subProp.replace(varCall, varVal);
 							}
-							a.push(prop + ':' + subProp + ';');
 						}
+						a.push(prop + ':' + subProp + ';');
 					}
 				}
 				return a.join('');
@@ -58,7 +52,7 @@ window.jstyle = function(arg){
 		browsers:browsers,
 		json:{},
 		styleNode:{},
-		jstyle:arguments.callee,
+		vars:{},
 		addMethod:function(name, fn){
 			this[name] = fn;
 			return this;
@@ -81,7 +75,7 @@ window.jstyle = function(arg){
 			styleNode = document.createElement('STYLE');
 			styleNode.setAttribute('type', 'text/css');
 			add2head(styleNode);
-			this.css = json2css(this.json);
+			this.css = json2css.call(this, this.json);
 			styleNode.styleSheet ?
 				styleNode.styleSheet.cssText = this.css:
 				styleNode.appendChild( document.createTextNode(this.css) );
@@ -111,6 +105,17 @@ window.jstyle = function(arg){
 				this.json[rule] && delete this.json[rule];
 			}
 			return this;
+		},
+		setVars:function(varHash){
+			for(v in varHash){
+				if(this.vars[v]){
+					alert('The name ' + v + ' is already in use(' + this.vars[v] + '), please choose another one');
+					break;
+				}else{
+					this.vars[v] = varHash[v];
+				}
+			}
+			return this;
 		}
 	};
-};
+})();
