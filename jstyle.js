@@ -84,7 +84,7 @@ window.jstyle = (function(arg){
 		addRules:function(rules, ctxt){
 			ctxt = ctxt || this.json;
 			if(typeof rules === 'function'){ return rules.call(this); }
-			var subRules;
+			var subRules, rule;
 			for(rule in rules){
 				subRules = rules[rule];
 				if(typeof subRules === 'object'){
@@ -107,6 +107,7 @@ window.jstyle = (function(arg){
 			return this;
 		},
 		setVars:function(varHash){
+			var v;
 			for(v in varHash){
 				if(this.vars[v]){
 					alert('The name ' + v + ' is already in use(' + this.vars[v] + '), please choose another one');
